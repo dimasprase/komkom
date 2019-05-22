@@ -13,12 +13,12 @@ import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:komkom/style/theme.dart' as Theme;
 import 'package:komkom/style/animations.dart';
-import 'package:flutter_country_picker/flutter_country_picker.dart';
 import 'package:komkom/controller/loginAnimation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
+import 'package:country_code_picker/country_code_picker.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key key}) : super(key: key);
@@ -47,8 +47,6 @@ class LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin 
   TextEditingController signupConfirmPasswordController = new TextEditingController();
 
   PageController _pageController;
-
-  Country _selected;
 
   AnimationController _controller;
   int _state = 0;
@@ -339,22 +337,11 @@ class LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin 
                                                   new Row(
                                                     children: <Widget>[
                                                       Padding(
-                                                        padding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 25.0),
-                                                        child: CountryPicker(
-                                                          dense: false,
-                                                          showFlag: true,
-                                                          showDialingCode: false,
-                                                          showName: false,
-                                                          onChanged: (Country country) {
-                                                            setState(() {
-                                                              _selected = country;
-                                                              codePhone = country.dialingCode;
-                                                            });
-                                                            print(country.name);
-                                                            print(country.dialingCode);
-                                                          },
-                                                          selectedCountry: _selected,
-                                                        ),
+                                                        padding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 15.0),
+                                                        child: CountryCodePicker(
+                                                            onChanged: _onCountryChange,
+                                                            initialSelection: 'ID',
+                                                            favorite: ['+62', 'ID']),
                                                       ),
                                                       Expanded(
                                                           child: Padding(
@@ -712,5 +699,12 @@ class LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin 
       return "Kata sandi tidak cocok";
     }
     return null;
+  }
+
+  void _onCountryChange(CountryCode countryCode) {
+    //print("New Country selected: " + countryCode.toString());
+    setState(() {
+      codePhone = countryCode.toString();
+    });
   }
 }
